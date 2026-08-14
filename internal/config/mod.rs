@@ -244,6 +244,14 @@ pub fn env_var_names(identity: &Identity) -> Vec<(String, &'static str)> {
         (identity.env_var("SERVER_PORT"), "server.port"),
         (identity.env_var("LOGGING_LEVEL"), "logging.level"),
         (identity.env_var("LOGGING_PROFILE"), "logging.profile"),
+        (identity.env_var("READ_TIMEOUT"), "server.read_timeout"),
+        (identity.env_var("WRITE_TIMEOUT"), "server.write_timeout"),
+        (identity.env_var("IDLE_TIMEOUT"), "server.idle_timeout"),
+        (
+            identity.env_var("SHUTDOWN_TIMEOUT"),
+            "server.shutdown_timeout",
+        ),
+        (identity.env_var("ADMIN_TOKEN"), "admin.token"),
     ]
 }
 
@@ -370,6 +378,26 @@ fn env_overrides(identity: &Identity) -> Value {
         "enabled",
         &first_env(identity, &["METRICS_ENABLED"]),
     );
+    insert_string(
+        &mut server,
+        "read_timeout",
+        &first_env(identity, &["READ_TIMEOUT"]),
+    );
+    insert_string(
+        &mut server,
+        "write_timeout",
+        &first_env(identity, &["WRITE_TIMEOUT"]),
+    );
+    insert_string(
+        &mut server,
+        "idle_timeout",
+        &first_env(identity, &["IDLE_TIMEOUT"]),
+    );
+    insert_string(
+        &mut server,
+        "shutdown_timeout",
+        &first_env(identity, &["SHUTDOWN_TIMEOUT"]),
+    );
     insert_bool(
         &mut health,
         "enabled",
@@ -472,26 +500,17 @@ fn validate_against_embedded_schema(merged: &Value) -> Result<(), ConfigError> {
     let schema: serde_json::Value =
         serde_json::from_str(EMBEDDED_SCHEMA).map_err(|e| ConfigError::Schema(e.to_string()))?;
     let instance = serde_json::to_value(merged).map_err(|e| ConfigError::Schema(e.to_string()))?;
-
-    // Demonstrate rsfulmen schema validation against an embedded Crucible schema
-    // (payload shape is not asserted; availability is).
-    let _ = rsfulmen::schema_validation::list_schemas(Some("observability/"));
-
-    if schema.get("type").and_then(|v| v.as_str()) != Some("object") {
-        return Err(ConfigError::Schema(
-            "embedded schema must be an object".into(),
-        ));
-    }
-    if !instance.is_object() {
-        return Err(ConfigError::Schema(
-            "merged config must be an object".into(),
-        ));
+    let compiled = jsonschema::JSONSchema::compile(&schema)
+        .map_err(|e| ConfigError::Schema(format!("compile embedded schema: {e}")))?;
+    if let Err(errors) = compiled.validate(&instance) {
+        let messages: Vec<String> = errors.map(|e| e.to_string()).collect();
+        return Err(ConfigError::Schema(messages.join("; ")));
     }
     Ok(())
 }
 
 fn default_host() -> String {
-    "0.0.0.0".to_string()
+    "127.0.0.1".to_string()
 }
 fn default_port() -> u16 {
     8080
@@ -531,6 +550,7 @@ mod tests {
         let identity = appid::load().expect("identity");
         let loaded = load(&identity, LoadOptions::default()).expect("load");
         assert_eq!(loaded.config.server.port, 8080);
+        assert_eq!(loaded.config.server.host, "127.0.0.1");
         assert!(loaded.config.health.enabled);
     }
 
@@ -538,5 +558,20 @@ mod tests {
     fn parse_duration_seconds() {
         assert_eq!(parse_duration("10s").unwrap(), Duration::from_secs(10));
         assert_eq!(parse_duration("250ms").unwrap(), Duration::from_millis(250));
+    }
+
+    #[test]
+    fn schema_rejects_invalid_workers() {
+        let identity = appid::load().expect("identity");
+        let overlay = serde_yaml::from_str("workers: 0").expect("overlay");
+        let err = load(
+            &identity,
+            LoadOptions {
+                runtime_overrides: Some(overlay),
+                ..LoadOptions::default()
+            },
+        )
+        .expect_err("workers: 0 must fail schema validation");
+        assert!(matches!(err, ConfigError::Schema(_)));
     }
 }

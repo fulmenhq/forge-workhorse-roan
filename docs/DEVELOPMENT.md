@@ -51,7 +51,7 @@ rsfulmen logging profiles: `SIMPLE` (stderr text) and `STRUCTURED` (JSON lines).
 
 ## Signals
 
-`serve` shuts down on Ctrl+C / SIGINT. `POST /admin/signal` accepts Foundry tokens (`TERM`, `INT`, `HUP`, …). Double-tap timing comes from the rsfulmen signal catalog.
+`serve` shuts down on Ctrl+C / SIGINT. Default bind is `127.0.0.1`. Binding a non-loopback address (including `0.0.0.0`) requires `{PREFIX}ADMIN_TOKEN` at startup. `POST /admin/signal` is mounted only on a loopback listener when that token is set, and the request must present `Authorization: Bearer …` or `X-Admin-Token`. Attempts are logged; secrets are not. Double-tap timing comes from the rsfulmen signal catalog.
 
 ## Optional crates
 

@@ -2,7 +2,7 @@
 # CDRL: rename this directory and file to match app.config_name.
 # Keep in sync with internal/assets/config/defaults.yaml (embedded for standalone binaries).
 server:
-  host: 0.0.0.0
+  host: 127.0.0.1
   port: 8080
   read_timeout: 30s
   write_timeout: 30s

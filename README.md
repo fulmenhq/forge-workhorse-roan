@@ -44,7 +44,7 @@ make bootstrap
 make run
 ```
 
-`make bootstrap` installs goneat **v0.5.16** via sfetch and fetches crate dependencies. `make run` starts the server (default `http://0.0.0.0:8080`).
+`make bootstrap` installs goneat **v0.5.16** via sfetch and fetches crate dependencies. `make run` starts the server (default `http://127.0.0.1:8080`).
 
 ```bash
 curl http://127.0.0.1:8080/health
@@ -72,13 +72,14 @@ Identity lives in `.fulmen/app.yaml`. Everything else (env prefix, config paths,
 
 Standard environment variables (prefix from App Identity):
 
-| Variable                        | Purpose                           | Default            |
-| ------------------------------- | --------------------------------- | ------------------ |
-| `{PREFIX}PORT` / `{PREFIX}HOST` | Listen address                    | `8080` / `0.0.0.0` |
-| `{PREFIX}LOG_LEVEL`             | `trace\|debug\|info\|warn\|error` | `info`             |
-| `{PREFIX}CONFIG_PATH`           | Layer 2 file override             | Config Path API    |
-| `{PREFIX}METRICS_PORT`          | Metrics port                      | same as `PORT`     |
-| `{PREFIX}HEALTH_PORT`           | Accepted for flag parity          | same as `PORT`     |
+| Variable                        | Purpose                           | Default              |
+| ------------------------------- | --------------------------------- | -------------------- |
+| `{PREFIX}PORT` / `{PREFIX}HOST` | Listen address                    | `8080` / `127.0.0.1` |
+| `{PREFIX}ADMIN_TOKEN`           | Shared secret for `/admin/signal` | unset (route off)    |
+| `{PREFIX}LOG_LEVEL`             | `trace\|debug\|info\|warn\|error` | `info`               |
+| `{PREFIX}CONFIG_PATH`           | Layer 2 file override             | Config Path API      |
+| `{PREFIX}METRICS_PORT`          | Metrics port                      | same as `PORT`       |
+| `{PREFIX}HEALTH_PORT`           | Accepted for flag parity          | same as `PORT`       |
 
 Copy `.env.example` to `.env` and adjust values. Layered load order: CLI flags → env vars → user config file → embedded defaults.
 
@@ -141,14 +142,14 @@ See [docs/development/fulmen_cdrl_guide.md](docs/development/fulmen_cdrl_guide.m
 
 ## HTTP
 
-| Path                 | Purpose                                           |
-| -------------------- | ------------------------------------------------- |
-| `GET /health`        | `{ "status": "healthy", "version": "..." }`       |
-| `GET /version`       | App, rsfulmen, and Crucible versions              |
-| `GET /metrics`       | Prometheus text                                   |
-| `GET\|POST /echo`    | Placeholder echo                                  |
-| `GET /docs`          | Docscribe sample (workhorse standard frontmatter) |
-| `POST /admin/signal` | Signal token (`TERM`, `INT`, `HUP`, …)            |
+| Path                 | Purpose                                                                      |
+| -------------------- | ---------------------------------------------------------------------------- |
+| `GET /health`        | `{ "status": "healthy", "version": "..." }`                                  |
+| `GET /version`       | App, rsfulmen, and Crucible versions                                         |
+| `GET /metrics`       | Prometheus text                                                              |
+| `GET\|POST /echo`    | Placeholder echo (8 KiB message cap)                                         |
+| `GET /docs`          | Docscribe sample (workhorse standard frontmatter)                            |
+| `POST /admin/signal` | Foundry signal; requires `{PREFIX}ADMIN_TOKEN`; not served on wildcard binds |
 
 ## Development
 

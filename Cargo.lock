@@ -1122,6 +1122,7 @@ dependencies = [
  "clap",
  "http",
  "http-body-util",
+ "jsonschema",
  "once_cell",
  "rsfulmen",
  "serde",
