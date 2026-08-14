@@ -36,9 +36,6 @@ jobs:
   build-test:
     needs: [format-check]
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/fulmenhq/goneat-tools-runner:v0.2.1
-      options: --user 1001
     env:
       FULMEN_WORKSPACE_ROOT: ${{ github.workspace }}
     steps:
@@ -51,23 +48,20 @@ jobs:
         uses: dtolnay/rust-toolchain@1.88.0
         with:
           components: rustfmt, clippy
-      - name: Verify runner + Rust toolchain
-        run: |
-          set -euo pipefail
-          prettier --version
-          yamlfmt --version
-          sfetch --version
-          rustc --version
-          cargo --version
-      - name: Install goneat v0.5.16
+      - name: Install sfetch and goneat v0.5.16
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq minisign
+          minisign -v
+          curl -sSfL https://github.com/3leaps/sfetch/releases/latest/download/install-sfetch.sh | bash
           BINDIR="${HOME}/.local/bin"
           mkdir -p "$BINDIR"
-          sfetch --repo fulmenhq/goneat --tag v0.5.16 --dest-dir "$BINDIR"
           echo "$BINDIR" >> "$GITHUB_PATH"
+          "$BINDIR/sfetch" --self-verify
+          "$BINDIR/sfetch" --repo fulmenhq/goneat --tag v0.5.16 --dest-dir "$BINDIR"
           VER="$("$BINDIR/goneat" --version 2>&1 | head -n1 || true)"
           echo "goneat: $VER"
           case "$VER" in
@@ -77,6 +71,17 @@ jobs:
               exit 1
               ;;
           esac
+          npm install -g prettier@3.7.4
+          curl -sSfL -o /tmp/yamlfmt.tgz \
+            https://github.com/google/yamlfmt/releases/download/v0.20.0/yamlfmt_0.20.0_Linux_x86_64.tar.gz
+          tar -xzf /tmp/yamlfmt.tgz -C "$BINDIR" yamlfmt
+          chmod +x "$BINDIR/yamlfmt"
+          command -v cc
+          cc --version | head -n1
+          prettier --version
+          "$BINDIR/yamlfmt" --version
+          rustc --version
+          cargo --version
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
       - name: Identity + format
