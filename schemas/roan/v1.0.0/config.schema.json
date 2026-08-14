@@ -8,12 +8,26 @@
     "server": {
       "type": "object",
       "properties": {
-        "host": { "type": "string" },
-        "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
-        "read_timeout": { "type": "string" },
-        "write_timeout": { "type": "string" },
-        "idle_timeout": { "type": "string" },
-        "shutdown_timeout": { "type": "string" }
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "read_timeout": {
+          "type": "string"
+        },
+        "write_timeout": {
+          "type": "string"
+        },
+        "idle_timeout": {
+          "type": "string"
+        },
+        "shutdown_timeout": {
+          "type": "string"
+        }
       }
     },
     "logging": {
@@ -21,35 +35,62 @@
       "properties": {
         "level": {
           "type": "string",
-          "enum": ["trace", "debug", "info", "warn", "error"]
+          "enum": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ]
         },
         "profile": {
           "type": "string",
-          "enum": ["SIMPLE", "STRUCTURED", "ENTERPRISE", "simple", "structured"]
+          "enum": [
+            "SIMPLE",
+            "STRUCTURED",
+            "ENTERPRISE",
+            "simple",
+            "structured"
+          ]
         }
       }
     },
     "metrics": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "port": { "type": "integer", "minimum": 1, "maximum": 65535 }
+        "enabled": {
+          "type": "boolean"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        }
       }
     },
     "health": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" }
+        "enabled": {
+          "type": "boolean"
+        }
       }
     },
     "debug": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" }
+        "enabled": {
+          "type": "boolean"
+        }
       }
     },
-    "workers": { "type": "integer", "minimum": 1 },
-    "enable_ui": { "type": "boolean" }
+    "workers": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "enable_ui": {
+      "type": "boolean"
+    }
   },
   "additionalProperties": true
 }

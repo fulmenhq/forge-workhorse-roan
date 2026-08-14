@@ -72,13 +72,13 @@ Identity lives in `.fulmen/app.yaml`. Everything else (env prefix, config paths,
 
 Standard environment variables (prefix from App Identity):
 
-| Variable | Purpose | Default |
-| --- | --- | --- |
-| `{PREFIX}PORT` / `{PREFIX}HOST` | Listen address | `8080` / `0.0.0.0` |
-| `{PREFIX}LOG_LEVEL` | `trace\|debug\|info\|warn\|error` | `info` |
-| `{PREFIX}CONFIG_PATH` | Layer 2 file override | Config Path API |
-| `{PREFIX}METRICS_PORT` | Metrics port | same as `PORT` |
-| `{PREFIX}HEALTH_PORT` | Accepted for flag parity | same as `PORT` |
+| Variable                        | Purpose                           | Default            |
+| ------------------------------- | --------------------------------- | ------------------ |
+| `{PREFIX}PORT` / `{PREFIX}HOST` | Listen address                    | `8080` / `0.0.0.0` |
+| `{PREFIX}LOG_LEVEL`             | `trace\|debug\|info\|warn\|error` | `info`             |
+| `{PREFIX}CONFIG_PATH`           | Layer 2 file override             | Config Path API    |
+| `{PREFIX}METRICS_PORT`          | Metrics port                      | same as `PORT`     |
+| `{PREFIX}HEALTH_PORT`           | Accepted for flag parity          | same as `PORT`     |
 
 Copy `.env.example` to `.env` and adjust values. Layered load order: CLI flags → env vars → user config file → embedded defaults.
 
@@ -106,21 +106,21 @@ docs/development/fulmen_cdrl_guide.md
 
 ## Make targets
 
-| Target | Purpose |
-| --- | --- |
-| `make bootstrap` | sfetch + goneat + `cargo fetch` |
-| `make run` | `serve --verbose` |
-| `make build` | debug binary in `bin/` |
-| `make test` | `cargo test` |
-| `make lint` | rustfmt check + clippy |
-| `make fmt` | rustfmt (and goneat format when installed) |
-| `make check-all` | fmt, identity verify, lint, test |
-| `make validate-app-identity` | fail on hardcoded breed strings in `cmd/` / `internal/` |
-| `make doctor` | CDRL completeness checks |
-| `make sync-embedded-identity` | copy `.fulmen/app.yaml` → embedded mirror |
-| `make verify-embedded-identity` | assert the mirror matches |
-| `make test-standalone-binary` | run `version` / `--help` from `/tmp` |
-| `make sync` | no-op helper shim (does **not** clone Crucible) |
+| Target                          | Purpose                                                 |
+| ------------------------------- | ------------------------------------------------------- |
+| `make bootstrap`                | sfetch + goneat + `cargo fetch`                         |
+| `make run`                      | `serve --verbose`                                       |
+| `make build`                    | debug binary in `bin/`                                  |
+| `make test`                     | `cargo test`                                            |
+| `make lint`                     | rustfmt check + clippy                                  |
+| `make fmt`                      | rustfmt (and goneat format when installed)              |
+| `make check-all`                | fmt, identity verify, lint, test                        |
+| `make validate-app-identity`    | fail on hardcoded breed strings in `cmd/` / `internal/` |
+| `make doctor`                   | CDRL completeness checks                                |
+| `make sync-embedded-identity`   | copy `.fulmen/app.yaml` → embedded mirror               |
+| `make verify-embedded-identity` | assert the mirror matches                               |
+| `make test-standalone-binary`   | run `version` / `--help` from `/tmp`                    |
+| `make sync`                     | no-op helper shim (does **not** clone Crucible)         |
 
 ## Pins
 
@@ -141,14 +141,14 @@ See [docs/development/fulmen_cdrl_guide.md](docs/development/fulmen_cdrl_guide.m
 
 ## HTTP
 
-| Path | Purpose |
-| --- | --- |
-| `GET /health` | `{ "status": "healthy", "version": "..." }` |
-| `GET /version` | App, rsfulmen, and Crucible versions |
-| `GET /metrics` | Prometheus text |
-| `GET\|POST /echo` | Placeholder echo |
-| `GET /docs` | Docscribe sample (workhorse standard frontmatter) |
-| `POST /admin/signal` | Signal token (`TERM`, `INT`, `HUP`, …) |
+| Path                 | Purpose                                           |
+| -------------------- | ------------------------------------------------- |
+| `GET /health`        | `{ "status": "healthy", "version": "..." }`       |
+| `GET /version`       | App, rsfulmen, and Crucible versions              |
+| `GET /metrics`       | Prometheus text                                   |
+| `GET\|POST /echo`    | Placeholder echo                                  |
+| `GET /docs`          | Docscribe sample (workhorse standard frontmatter) |
+| `POST /admin/signal` | Signal token (`TERM`, `INT`, `HUP`, …)            |
 
 ## Development
 

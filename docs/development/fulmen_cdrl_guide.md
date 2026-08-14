@@ -165,12 +165,12 @@ myapi serve --config ./config/myapi/v1.0.0/myapi-defaults.yaml
 
 ## Parameterization points
 
-| Point | Source |
-| --- | --- |
-| Binary name | `app.binary_name` |
-| Env prefix | `app.env_prefix` |
-| Config paths | `app.vendor` + `app.config_name` |
-| Cargo package | `Cargo.toml` |
+| Point               | Source                                          |
+| ------------------- | ----------------------------------------------- |
+| Binary name         | `app.binary_name`                               |
+| Env prefix          | `app.env_prefix`                                |
+| Config paths        | `app.vendor` + `app.config_name`                |
+| Cargo package       | `Cargo.toml`                                    |
 | Telemetry namespace | `metadata.telemetry_namespace` or `binary_name` |
 
 ## Support
