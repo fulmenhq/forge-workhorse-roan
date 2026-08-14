@@ -1,0 +1,45 @@
+# Build artifacts
+bin/
+dist/
+target/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test / coverage
+coverage/
+coverage.out
+coverage.html
+*.profraw
+
+# SBOM artifacts (generated)
+sbom/
+
+# Environment files
+.env
+.env.local
+*.local
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Planning files (local only; never commit)
+.plans/
+
+# goneat local overrides
+.goneat/tools.local.yaml
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Logs
+*.log
+logs/
