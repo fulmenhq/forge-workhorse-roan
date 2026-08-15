@@ -1,0 +1,44 @@
+# Fulmen Application Identity
+# This file defines the application's identity metadata for integration with
+# the Fulmen ecosystem (rsfulmen, Crucible, etc.)
+#
+# DO NOT COMMIT APPLICATION-SPECIFIC VALUES
+# This is a template file. When using CDRL (Clone → Degit → Refit → Launch),
+# update these values to match your application's identity.
+app:
+  # Vendor/organization name (used for config paths, namespaces)
+  # Example: "acme" for Acme Corp, "fulmen" for FulmenHQ
+  vendor: fulmen
+  # Binary name (used for executable, config files, env var prefix)
+
+  # Example: "myapi", "data-processor", "analytics-engine"
+  # During CDRL refit: Change this value to your application name
+  binary_name: roan
+  # Environment variable prefix (MUST end with underscore)
+
+  # Used for all env vars: {env_prefix}PORT, {env_prefix}LOG_LEVEL, etc.
+  # Example: "MYAPI_" → MYAPI_PORT, "ANALYTICS_" → ANALYTICS_LOG_LEVEL
+  # During CDRL refit: Change this value to your application prefix
+  env_prefix: ROAN_
+  # Config file name (without extension)
+
+  # Used for config file discovery: ~/.config/{vendor}/{config_name}/config.yaml
+  # Example: "myapi" → ~/.config/acme/myapi/config.yaml
+  # During CDRL refit: Change this value to your application config name
+  config_name: roan
+  # Optional: Application description
+
+  description: A Fulmen workhorse application template for robust, scalable Rust backends
+  # Optional: Version (can be overridden at build time)
+
+  version: 0.1.0
+metadata:
+  # Service type (category from Fulmen taxonomy)
+  # Options: workhorse, cli, library, service
+  # See: https://github.com/fulmenhq/crucible/tree/main/schemas/taxonomy/repository-category
+  repository_category: workhorse
+  # Optional metadata fields
+
+# project_url: https://github.com/fulmenhq/forge-workhorse-roan
+# support_email: support@fulmen.net
+# license: MIT

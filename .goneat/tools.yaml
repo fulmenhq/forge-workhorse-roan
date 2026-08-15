@@ -1,0 +1,167 @@
+# goneat Tools Configuration (v1.0.0)
+#
+# DX-only. This repository does not use ssot-consumer.yaml or make sync-ssot.
+scopes:
+  all:
+    description: All tools from all scopes
+    tools:
+      - ripgrep
+      - jq
+      - yq
+      - rustc
+      - cargo
+      - rustfmt
+      - clippy
+      - yamlfmt
+      - prettier
+  format:
+    description: Code formatting tools
+    tools:
+      - rustfmt
+      - yamlfmt
+      - prettier
+  foundation:
+    description: Core foundation tools required for goneat and basic operation
+    tools:
+      - ripgrep
+      - jq
+      - yq
+      - rustc
+      - cargo
+      - rustfmt
+      - yamlfmt
+      - prettier
+  lint:
+    description: Lint tools
+    tools:
+      - clippy
+      - rustfmt
+tools:
+  cargo:
+    name: cargo
+    description: Rust package manager (bundled with rustc)
+    kind: system
+    detect_command: cargo --version
+    platforms:
+      - darwin
+      - linux
+      - windows
+    installer_priority:
+      darwin:
+        - rustup
+      linux:
+        - rustup
+      windows:
+        - rustup
+  clippy:
+    name: clippy
+    description: Rust linter
+    kind: bundled-rust
+    detect_command: cargo clippy --version
+    installer_priority:
+      all:
+        - rustup
+  jq:
+    name: jq
+    description: JSON processor
+    kind: system
+    detect_command: jq --version
+    platforms:
+      - darwin
+      - linux
+      - windows
+    installer_priority:
+      darwin:
+        - brew
+      linux:
+        - brew
+      windows:
+        - scoop
+        - winget
+  prettier:
+    name: prettier
+    description: Opinionated code formatter
+    kind: node
+    detect_command: prettier --version
+    installer_priority:
+      darwin:
+        - brew
+      linux:
+        - brew
+      windows:
+        - bun
+        - npm
+  ripgrep:
+    name: ripgrep
+    description: Fast text search
+    kind: system
+    detect_command: rg --version
+    platforms:
+      - darwin
+      - linux
+      - windows
+    installer_priority:
+      darwin:
+        - brew
+      linux:
+        - brew
+      windows:
+        - scoop
+        - winget
+  rustc:
+    name: rustc
+    description: Rust compiler
+    kind: system
+    detect_command: rustc --version
+    platforms:
+      - darwin
+      - linux
+      - windows
+    version_scheme: semver
+    minimum_version: 1.88.0
+    recommended_version: 1.88.0
+    installer_priority:
+      darwin:
+        - rustup
+      linux:
+        - rustup
+      windows:
+        - rustup
+  rustfmt:
+    name: rustfmt
+    description: Rust formatter
+    kind: bundled-rust
+    detect_command: rustfmt --version
+    installer_priority:
+      all:
+        - rustup
+  yamlfmt:
+    name: yamlfmt
+    description: YAML formatter and linter
+    kind: go
+    detect_command: yamlfmt --version
+    install_package: github.com/google/yamlfmt/cmd/yamlfmt@latest
+    version_args:
+      - --version
+    check_args:
+      - --help
+    installer_priority:
+      all:
+        - go-install
+  yq:
+    name: yq
+    description: YAML processor
+    kind: system
+    detect_command: yq --version
+    platforms:
+      - darwin
+      - linux
+      - windows
+    installer_priority:
+      darwin:
+        - brew
+      linux:
+        - brew
+      windows:
+        - scoop
+        - winget

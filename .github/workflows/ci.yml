@@ -1,0 +1,107 @@
+# yamllint disable rule:document-start
+# yamllint disable rule:truthy
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/fulmenhq/goneat-tools-runner:v0.2.1
+      options: --user 1001
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify foundation tools
+        run: |
+          set -euo pipefail
+          prettier --version
+          yamlfmt --version
+          jq --version
+          yq --version
+          rg --version
+      - name: Check formatting
+        run: |
+          set -euo pipefail
+          yamlfmt -lint .
+          prettier --check "**/*.{md,json}" || \
+            echo "Prettier differences found (non-blocking)"
+  build-test:
+    needs: [format-check]
+    runs-on: ubuntu-latest
+    env:
+      FULMEN_WORKSPACE_ROOT: ${{ github.workspace }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@1.88.0
+        with:
+          components: rustfmt, clippy
+      - name: Install sfetch and goneat v0.5.16
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq minisign
+          minisign -v
+          curl -sSfL https://github.com/3leaps/sfetch/releases/latest/download/install-sfetch.sh | bash
+          BINDIR="${HOME}/.local/bin"
+          mkdir -p "$BINDIR"
+          echo "$BINDIR" >> "$GITHUB_PATH"
+          "$BINDIR/sfetch" --self-verify
+          "$BINDIR/sfetch" --repo fulmenhq/goneat --tag v0.5.16 --dest-dir "$BINDIR"
+          VER="$("$BINDIR/goneat" --version 2>&1 | head -n1 || true)"
+          echo "goneat: $VER"
+          case "$VER" in
+            *0.5.16*) ;;
+            *)
+              echo "expected goneat 0.5.16, got: $VER"
+              exit 1
+              ;;
+          esac
+          npm install -g prettier@3.7.4
+          curl -sSfL -o /tmp/yamlfmt.tgz \
+            https://github.com/google/yamlfmt/releases/download/v0.20.0/yamlfmt_0.20.0_Linux_x86_64.tar.gz
+          tar -xzf /tmp/yamlfmt.tgz -C "$BINDIR" yamlfmt
+          chmod +x "$BINDIR/yamlfmt"
+          command -v cc
+          cc --version | head -n1
+          prettier --version
+          "$BINDIR/yamlfmt" --version
+          rustc --version
+          cargo --version
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+      - name: Identity + format
+        run: |
+          set -euo pipefail
+          command -v goneat
+          goneat --version
+          make validate-app-identity
+          make fmt
+          git diff --exit-code
+      - name: Lint
+        run: |
+          set -euo pipefail
+          make lint
+      - name: Test
+        run: |
+          set -euo pipefail
+          make test
+      - name: Build binary
+        run: |
+          set -euo pipefail
+          make build
+          make test-standalone-binary
