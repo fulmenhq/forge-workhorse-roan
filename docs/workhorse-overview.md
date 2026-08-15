@@ -21,9 +21,9 @@ Accessed through rsfulmen 0.1.5. This template does not depend on Crucible git.
 | Config Path API     | Required    | `rsfulmen::config::get_app_config_dir`                        |
 | Schema validation   | Required    | Embedded config schema + rsfulmen helpers                     |
 | Telemetry / metrics | Required    | Registry + Prometheus `/metrics`                              |
-| Logging             | Required    | SIMPLE / STRUCTURED profiles                                  |
+| Logging             | Required    | SIMPLE / STRUCTURED profiles; `X-Request-ID` correlation      |
 | Error handling      | Required    | Fulmen error envelope                                         |
-| Signal handling     | Required    | Catalog, graceful shutdown; `/admin/signal` when token is set |
+| Signal handling     | Required    | SIGTERM/SIGINT, 2s double-tap, SIGHUP reload; `/admin/signal` |
 | Docscribe           | Required    | `/docs` sample + `envinfo`                                    |
 | Foundry             | Recommended | Exit-code catalog                                             |
 | sysprims / ipcprims | Optional    | Documented only; not crate deps                               |

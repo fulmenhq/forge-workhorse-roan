@@ -51,7 +51,11 @@ rsfulmen logging profiles: `SIMPLE` (stderr text) and `STRUCTURED` (JSON lines).
 
 ## Signals
 
-`serve` shuts down on Ctrl+C / SIGINT. Default bind is `127.0.0.1`. Binding a non-loopback address (including `0.0.0.0`) requires `{PREFIX}ADMIN_TOKEN` at startup. `POST /admin/signal` is mounted only on a loopback listener when that token is set, and the request must present `Authorization: Bearer …` or `X-Admin-Token`. Attempts are logged; secrets are not. Double-tap timing comes from the rsfulmen signal catalog.
+`serve` listens through `rsfulmen::signals::SignalManager`. SIGTERM and SIGINT start graceful shutdown. A second SIGINT inside the catalog window (2s) force-quits. SIGHUP reloads three-layer config: validate against the embedded schema, apply in-process, keep the current listen address. Invalid config is rejected and the process continues. Default bind is `127.0.0.1`. Binding a non-loopback address (including `0.0.0.0`) requires `{PREFIX}ADMIN_TOKEN` at startup. `POST /admin/signal` is mounted only on a loopback listener when that token is set, and the request must present `Authorization: Bearer …` or `X-Admin-Token`. Attempts are logged; secrets are not.
+
+## Request ID
+
+Every HTTP response includes `X-Request-ID`. An incoming value is honored; otherwise a UUID is generated. The same identifier is attached to request-scoped logs and error envelopes.
 
 ## Optional crates
 

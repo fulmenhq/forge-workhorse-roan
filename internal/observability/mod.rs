@@ -69,10 +69,24 @@ impl Observability {
 
     /// Wrap an error using rsfulmen's error envelope.
     pub fn wrap_error(&self, code: &str, message: &str) -> ErrorResponse {
+        self.wrap_error_correlated(code, message, None)
+    }
+
+    /// Wrap an error and attach a request correlation identifier.
+    pub fn wrap_error_correlated(
+        &self,
+        code: &str,
+        message: &str,
+        correlation_id: Option<&str>,
+    ) -> ErrorResponse {
+        let correlation_id = correlation_id
+            .map(str::trim)
+            .filter(|value| !value.is_empty())
+            .map(ToOwned::to_owned);
         let mut err = ErrorResponse::wrap(
             ErrorResponse::new(code, message),
             WrapOptions {
-                correlation_id: None,
+                correlation_id,
                 ..WrapOptions::default()
             },
         )

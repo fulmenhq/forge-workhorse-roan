@@ -151,6 +151,8 @@ See [docs/development/fulmen_cdrl_guide.md](docs/development/fulmen_cdrl_guide.m
 | `GET /docs`          | Docscribe sample (workhorse standard frontmatter)                            |
 | `POST /admin/signal` | Foundry signal; requires `{PREFIX}ADMIN_TOKEN`; not served on wildcard binds |
 
+All responses include `X-Request-ID` (honored when the client sends one).
+
 ## Development
 
 See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) and [AGENTS.md](AGENTS.md).

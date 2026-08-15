@@ -74,19 +74,17 @@ fn execute_inner() -> Result<(), CliError> {
     let cli = Cli::parse();
     let identity = appid::get().map_err(|e| CliError::Identity(e.to_string()))?;
     let runtime = runtime_overrides(&cli)?;
-    let loaded = config::load(
-        identity,
-        LoadOptions {
-            config_path: cli.config.clone(),
-            runtime_overrides: runtime,
-        },
-    )
-    .map_err(|e| CliError::Config(e.to_string()))?;
+    let load_options = LoadOptions {
+        config_path: cli.config.clone(),
+        runtime_overrides: runtime,
+    };
+    let loaded = config::load(identity, load_options.clone())
+        .map_err(|e| CliError::Config(e.to_string()))?;
 
     let obs = Observability::new(identity, &loaded.config.logging, cli.verbose);
 
     match cli.command {
-        Commands::Serve(args) => serve::run(identity, &loaded.config, &obs, args),
+        Commands::Serve(args) => serve::run(identity, &loaded.config, &obs, args, load_options),
         Commands::Version(args) => version::run(identity, args),
         Commands::Health => health::run(identity, &loaded.config, &obs),
         Commands::Envinfo => envinfo::run(identity, &loaded, &obs),
