@@ -1,6 +1,6 @@
 use super::CliError;
 use crate::appid::Identity;
-use crate::config::Config;
+use crate::config::{Config, LoadOptions};
 use crate::observability::Observability;
 use crate::server;
 use clap::Args;
@@ -11,7 +11,11 @@ use serde_yaml::{Mapping, Value};
 #[command(after_help = "Examples:\n  \
     serve\n  \
     serve --port 8080 --log-level info\n  \
-    serve --host 127.0.0.1 --port 9090 --log-level debug\n")]
+    serve --host 127.0.0.1 --port 9090 --log-level debug\n\n\
+    Signals:\n  \
+    SIGTERM/SIGINT  graceful shutdown\n  \
+    Ctrl+C twice    force quit (2s window from the signal catalog)\n  \
+    SIGHUP          reload config (validate, apply in-process)\n")]
 pub struct ServeArgs {
     /// Bind host (overrides config / env).
     #[arg(long)]
@@ -87,6 +91,7 @@ pub fn run(
     config: &Config,
     observability: &Observability,
     _args: ServeArgs,
+    load_options: LoadOptions,
 ) -> Result<(), CliError> {
     observability.logger.info(
         "starting server",
@@ -103,6 +108,7 @@ pub fn run(
             identity.clone(),
             config.clone(),
             observability.clone(),
+            load_options,
         ))
         .map_err(|e| CliError::Server(e.to_string()))
 }
